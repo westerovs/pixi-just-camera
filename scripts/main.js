@@ -12,6 +12,7 @@ class Game {
     this.blockA = null
     this.blockB = null
     this.blockC = null
+    this.sceneContainer = new Container()
   }
 
   preload() {
@@ -29,8 +30,10 @@ class Game {
   }
 
   startGame = () => {
+    this.app.stage.addChild(this.sceneContainer)
     this.createContainers()
     this.createCamera(500, 200)
+    this.createCameraMask()
 
     const dotCenter = this.camera.getChildByName('dotCenter')
 
@@ -52,14 +55,14 @@ class Game {
     const containerGreen = this.createContainer1(100, 200)
     const containerBlue = this.createContainer2(700, 0)
 
-    this.app.stage.addChild(containerRed)
+    this.sceneContainer.addChild(containerRed)
     containerRed.addChild(containerGreen)
     containerGreen.addChild(containerBlue)
 
     this.blockA = containerGreen.getChildByName('blockA')
     this.blockB = containerBlue.getChildByName('blockB')
     this.blockC = this.createSprite('blockC', 900, 900)
-    this.app.stage.addChild(this.blockC)
+    this.sceneContainer.addChild(this.blockC)
   }
 
   createContainer3 = (x = 0, y = 0) => {
@@ -157,6 +160,24 @@ class Game {
     this.camera.addChild(dotCenter)
 
     this.camera.position.set(x, y)
+  }
+
+  createCameraMask = () => {
+    const mask = new Graphics()
+    mask.beginFill(0xFFFFFF)
+    mask.drawRect(0, 0, this.camera.width, this.camera.height)
+    mask.endFill()
+
+    this.camera.addChild(mask)
+    this.sceneContainer.mask = mask
+
+    // Добавляем черный фон за пределами камеры
+    const blackBackground = new Graphics()
+    blackBackground.beginFill(0x000000)
+    blackBackground.drawRect(0, 0, this.app.view.width, this.app.view.height)
+    blackBackground.endFill()
+    this.app.stage.addChild(blackBackground)
+    this.app.stage.addChild(this.sceneContainer)
   }
 
   // Метод для анимации камеры к ближайшему объекту
