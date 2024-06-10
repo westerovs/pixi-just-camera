@@ -4,6 +4,9 @@ export const assetsMap = {
     {name: 'container2', url: './assets/images/container2.png'},
     {name: 'container3', url: './assets/images/container3.png'},
 
+    {name: 'cameraContainer', url: './assets/images/cameraContainer.png'},
+    {name: 'dotCenter', url: './assets/images/dotCenter.png'},
+
     {name: 'blockA', url: './assets/images/block-a.png'},
     {name: 'blockB', url: './assets/images/block-b.png'},
     {name: 'blockC', url: './assets/images/block-c.png'},

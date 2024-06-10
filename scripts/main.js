@@ -1,4 +1,4 @@
-import {Application, Rectangle, Container, Sprite, Texture, Graphics} from '../assets/lib/pixi.mjs'
+import {Application, Rectangle, Container, Sprite, Texture, Graphics, Point} from '../assets/lib/pixi.mjs'
 import {assetsMap} from './assetsMap.js'
 import {config} from './config.js'
 
@@ -8,6 +8,7 @@ document.body.appendChild(App.view)
 class Game {
   constructor() {
     this.app = App
+    this.camera = new Container()
     this.blockA = null
     this.blockB = null
     this.blockC = null
@@ -29,14 +30,16 @@ class Game {
 
   startGame = () => {
     this.createContainers()
+    this.createCamera(500, 200)
 
-    this.createLine(this.blockC, this.blockA)
+    const dotCenter = this.camera.getChildByName('dotCenter')
 
-    gsap.to([this.blockA, this.blockB], {x: 200, yoyo: true, repeat: -1, duration: 2, ease: 'none'})
+    this.createLine(dotCenter, this.blockA)
+    this.createLine(dotCenter, this.blockB)
+    this.createLine(dotCenter, this.blockC)
 
-    console.log(this.blockA.getGlobalPosition())
-    console.log(this.blockB.getGlobalPosition())
-    console.log(this.blockC.getGlobalPosition())
+    const localPosition = this.getLocalPosition(this.blockB, this.blockA.parent)
+    console.log(localPosition)
   }
 
   createContainers = () => {
@@ -46,7 +49,7 @@ class Game {
 
     this.app.stage.addChild(containerRed)
     containerRed.addChild(containerGreen)
-    containerRed.addChild(containerBlue)
+    containerGreen.addChild(containerBlue)
 
     this.blockA = containerGreen.getChildByName('blockA')
     this.blockB = containerBlue.getChildByName('blockB')
@@ -101,18 +104,53 @@ class Game {
   createLine(itemStart, itemEnd) {
     const line = new Graphics()
     line.lineStyle(6, 0xFF0000)
-    line.moveTo(itemStart.x + (itemStart.width / 2), itemStart.y + (itemStart.height / 2))
-    line.lineTo(itemEnd.x  + (itemEnd.width / 2), itemEnd.y  + (itemEnd.height / 2))
+
+    const getCenter = (item) => {
+      const globalPosition = item.toGlobal(new Point())
+      const anchorX = item.anchor ? item.anchor.x : 0
+      const anchorY = item.anchor ? item.anchor.y : 0
+      return {
+        x: globalPosition.x + item.width * (0.5 - anchorX),
+        y: globalPosition.y + item.height * (0.5 - anchorY)
+      }
+    }
+
+    const startCenter = getCenter(itemStart)
+    const endCenter = getCenter(itemEnd)
+
+    line.moveTo(startCenter.x, startCenter.y)
+    line.lineTo(endCenter.x, endCenter.y)
 
     line.update = () => {
       line.clear()
       line.lineStyle(6, 0xFF0000)
-      line.moveTo(itemStart.x + (itemStart.width / 2), itemStart.y + (itemStart.height / 2))
-      line.lineTo(itemEnd.x  + (itemEnd.width / 2), itemEnd.y  + (itemEnd.height / 2))
+      const startCenter = getCenter(itemStart)
+      const endCenter = getCenter(itemEnd)
+      line.moveTo(startCenter.x, startCenter.y)
+      line.lineTo(endCenter.x, endCenter.y)
     }
+
     setInterval(() => line.update(), 100)
 
     this.app.stage.addChild(line)
+  }
+
+  getLocalPosition(target, container) {
+    const globalPosition = target.getGlobalPosition()
+    return container.toLocal(globalPosition)
+  }
+
+  createCamera = (x = 0, y = 0) => {
+    this.app.stage.addChild(this.camera)
+    const sprite = this.createSprite('cameraContainer')
+    this.camera.addChild(sprite)
+
+    const dotCenter = this.createSprite('dotCenter')
+    dotCenter.name = 'dotCenter'
+    dotCenter.position.set(this.camera.width / 2, this.camera.height / 2)
+    this.camera.addChild(dotCenter)
+
+    this.camera.position.set(x, y)
   }
 }
 
