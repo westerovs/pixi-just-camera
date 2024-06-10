@@ -1,0 +1,23 @@
+# dependencies
+
+node_modules
+/.pnp
+.pnp.js
+
+
+# production
+/build
+
+# misc
+desktop.ini
+npm-debug.log
+.DS_Store
+/dist
+/release
+/.vscode
+/.git
+.idea
+/yarn-error.log
+/package-lock.json
+
+
