@@ -40,6 +40,11 @@ class Game {
 
     const localPosition = this.getLocalPosition(this.blockB, this.blockA.parent)
     console.log(localPosition)
+
+    const closestObject = this.findClosestObject(dotCenter, [this.blockA, this.blockB, this.blockC])
+    console.log(`Closest object to dotCenter: ${closestObject.name}`)
+
+    this.animateCameraToClosestObject(dotCenter, closestObject)
   }
 
   createContainers = () => {
@@ -74,7 +79,7 @@ class Game {
     const sprite = this.createSprite('container1')
     container.addChild(sprite)
 
-    const block = this.createSprite('blockA', 100, 100)
+    const block = this.createSprite('blockA', 200, 100)
     block.name = 'blockA'
     container.addChild(block)
 
@@ -140,6 +145,7 @@ class Game {
     return container.toLocal(globalPosition)
   }
 
+  // ------------------ camera
   createCamera = (x = 0, y = 0) => {
     this.app.stage.addChild(this.camera)
     const sprite = this.createSprite('cameraContainer')
@@ -152,6 +158,70 @@ class Game {
 
     this.camera.position.set(x, y)
   }
+
+  // Метод для анимации камеры к ближайшему объекту
+  animateCameraToClosestObject(dotCenter, closestObject) {
+    const targetCenter = this.getCenter(closestObject)
+    const dotCenterPos = this.getCenter(dotCenter)
+    const currentCameraPos = this.camera.position
+
+    // Смещение камеры к целевому объекту
+    const offsetX = targetCenter.x - dotCenterPos.x
+    const offsetY = targetCenter.y - dotCenterPos.y
+
+    gsap.to(this.camera.position, {
+      x: currentCameraPos.x + offsetX,
+      y: currentCameraPos.y + offsetY,
+      duration: 2,
+      yoyo: true,
+      repeat: 1,
+      ease: "power1.inOut"
+    })
+  }
+
+
+  // Метод для вычисления центра элемента
+  getCenter(item) {
+    const globalPosition = item.toGlobal(new Point())
+    if (item.anchor) {
+      // Если это спрайт, учитываем anchor
+      return {
+        x: globalPosition.x + item.width * (0.5 - item.anchor.x),
+        y: globalPosition.y + item.height * (0.5 - item.anchor.y)
+      }
+    } else {
+      // Если это контейнер, просто возвращаем глобальную позицию
+      return {
+        x: globalPosition.x + item.width / 2,
+        y: globalPosition.y + item.height / 2
+      }
+    }
+  }
+
+
+  // Метод для вычисления расстояния между двумя точками
+  calculateDistance(point1, point2) {
+    return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2))
+  }
+
+  // Метод для нахождения ближайшего объекта к dotCenter
+  findClosestObject(dotCenter, objects) {
+    const dotCenterPos = this.getCenter(dotCenter)
+    let closestObject = null
+    let minDistance = Infinity
+
+    objects.forEach(object => {
+      const objectCenter = this.getCenter(object)
+      const distance = this.calculateDistance(dotCenterPos, objectCenter)
+      if (distance < minDistance) {
+        minDistance = distance
+        closestObject = object
+      }
+    })
+
+    return closestObject
+  }
+
 }
 
 new Game().init()
