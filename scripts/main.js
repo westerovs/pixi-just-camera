@@ -1,6 +1,5 @@
 import {Application, Rectangle, Container, Sprite, Texture} from '../assets/lib/pixi.mjs'
 import {assetsMap} from './assetsMap.js'
-import {createSprite} from './utils/utils.js'
 import {config} from './config.js'
 
 const App = new Application(config)
@@ -26,14 +25,31 @@ class Game {
   }
 
   startGame = () => {
+    const containerRed = this.createContainer3(0, 0)
+    this.app.stage.addChild(containerRed)
+
     const containerGreen = this.createContainer1()
-    const containerBlue = this.createContainer2(500, 0)
+    const containerBlue = this.createContainer2(700, 0)
+
+    containerRed.addChild(containerGreen)
+    containerRed.addChild(containerBlue)
 
     const blockA = containerGreen.getChildByName('blockA')
     const blockB = containerBlue.getChildByName('blockB')
 
-    console.log(blockA)
-    console.log(blockB)
+    const blockC = this.createSprite('blockC')
+    blockC.position.set(900)
+    this.app.stage.addChild(blockC)
+  }
+
+  createContainer3 = (x = 0, y = 0) => {
+    const container = new Container()
+    container.position.set(x, y)
+
+    const sprite = this.createSprite('container3')
+    container.addChild(sprite)
+
+    return container
   }
 
   createContainer1 = (x = 0, y = 0) => {
@@ -47,8 +63,6 @@ class Game {
     block.name = 'blockA'
     block.position.set(0)
     container.addChild(block)
-
-    this.app.stage.addChild(container)
 
     return container
   }
@@ -64,8 +78,6 @@ class Game {
     block.name = 'blockB'
     block.position.set(0)
     container.addChild(block)
-
-    this.app.stage.addChild(container)
 
     return container
   }
