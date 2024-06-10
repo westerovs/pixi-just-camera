@@ -1,0 +1,77 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --text-color: #fff;
+  --text-color-active: #ffe800;
+  --text-color-good: #7bc549;
+  --text-color-average: #e49a27;
+  --text-color-poor: red;
+
+  --background: #121213;
+  --outline-color: #31353f;
+
+  --font:'Open Sans', 'Arial', sans-serif;
+  --font-size: 18px;
+  --font-size-smaller: 14px;
+  --font-size-bigger: 20px;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'), url('../assets/fonts/OpenSans-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Open Sans Bold'), local('OpenSans-Bold'), url('../assets/fonts/OpenSans-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 800;
+  src: local('Open Sans ExtraBold'), local('OpenSans-ExtraBold'), url('../assets/fonts/OpenSans-ExtraBold.woff2') format('woff2');
+}
+
+.page {
+  position: relative;
+  min-height: 100%;
+  background: gray;
+  -webit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+.page-body {
+  min-height: 100%;
+  font-size: var(--font-size);
+  font-family: Geometria, Arial, Helvetica, sans-serif;
+  color: var(--text-color);
+  overflow: hidden;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 0 !important;
+  border: 0 !important;
+  height: 1px !important;
+  width: 1px !important;
+  overflow: hidden;
+}
+
+canvas {
+  outline: 2px solid red;
+  outline-offset: -2px;
+  image-rendering: optimizeSpeed;
+}
